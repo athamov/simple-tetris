@@ -1,5 +1,5 @@
 let randomNumber = function(end){
-  return Math.floor(Math.random()* end )
+  return Math.floor(Math.random() * end )
 }
 
 let Interval;
@@ -65,7 +65,7 @@ class Block {
   }
 }
 
-function checking_zero(beginX, beginY, endX, endY) {
+function checking_moving_place(beginX, beginY, endX, endY) {
   for(let y = beginY; y < endY; y++){
     for(let x = beginX; x < endX; x++){
       if( boardArray[ y ][ x ] != 0 )  return false;
@@ -74,11 +74,11 @@ function checking_zero(beginX, beginY, endX, endY) {
   return true
 }
 
-function createCleanArray(){
+function createClearBinaryMatrix(rows, cols) {
   let boardArray = []
-  for(let y=0; y<ROWS;y++){
+  for(let y=0; y<rows;y++){
     boardArray[y]=[]
-    for(let x=0; x<COLS;x++){
+    for(let x=0; x<cols;x++){
     boardArray[ y ][ x ] = 0;
   }
   }

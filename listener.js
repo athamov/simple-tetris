@@ -6,21 +6,24 @@ play.addEventListener("click",()=>{
   play.style.visibility="hidden"
   pause.style.visibility="visible"
 
-  boardArray = createCleanArray()
-  trailShape = [beginX,0]
+  boardArray = createClearMatrix(COLS,ROWS)
 
+  trailShape = [beginX,0]
   currentType = nextType
   nextType = types[nameOfTypes[randomNumber(6)]]
   currentBlock = new Block(currentType.color,currentType.states[randomNumber(currentType.size)]);
 
 
   Interval = setInterval(()=>{
-    checkPlace = checking_zero(trailShape[0] , trailShape[1], trailShape[0] + currentType.size, trailShape[1] + currentType.size)
+    checkPlace = checking_moving_place(trailShape[0] , trailShape[1], trailShape[0] + currentType.size, trailShape[1] + currentType.size)
     console.log("Checking" + checkPlace)
 
     if(checkPlace) {
-      currentBlock.cleanShape(trailShape[0]-1 , trailShape[1])
+      currentBlock.cleanShape(trailShape[0] , trailShape[1]-1)
       currentBlock.drawShape(trailShape[0], trailShape[1])
+    }
+    else {
+
     }
 
 
@@ -43,28 +46,28 @@ function stop() {
 
 
 //! keyboard function
-// function doKeyDown(evt){
-//   switch (evt.keyCode) {
-//   case 38:  /* Up arrow was pressed */
-//   if (y - dy > 0){
-//   y -= dy;
-//   }
-//   break;
-//   case 40:  /* Down arrow was pressed */
-//   if (y + dy < HEIGHT){
-//   y += dy;
-//   }
-//   break;
-//   case 37:  /* Left arrow was pressed */
-//   if (x - dx > 0){
-//   x -= dx;
-//   }
-//   break;
-//   case 39:  /* Right arrow was pressed */
-//   if (x + dx < WIDTH){
-//   x += dx;
-//   }
-//   break;
-//   }
-//   }
-// window.addEventListener('keydown',doKeyDown,true);
+function doKeyDown(evt){
+  switch (evt.keyCode) {
+  case 38:  /* Up arrow was pressed */
+  if (y - dy > 0){
+  y -= dy;
+  }
+  break;
+  case 40:  /* Down arrow was pressed */
+  if (y + dy < HEIGHT){
+  y += dy;
+  }
+  break;
+  case 37:  /* Left arrow was pressed */
+  if (x - dx > 0){
+  x -= dx;
+  }
+  break;
+  case 39:  /* Right arrow was pressed */
+  if (x + dx < WIDTH){
+  x += dx;
+  }
+  break;
+  }
+  }
+window.addEventListener('keydown',doKeyDown,true);
