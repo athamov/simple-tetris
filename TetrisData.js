@@ -1,6 +1,6 @@
 const BLOCK_SIZE = 30;
 const COLS = 10;
-const ROWS = 20;
+const ROWS = 22;
 const BLOCK_GAP = 1;
 const nameOfTypes = ['I','J','L','O','S','T','V']
 const beginX = 4

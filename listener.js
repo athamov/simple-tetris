@@ -2,35 +2,43 @@
 const play = document.querySelector('#play');
 const pause = document.querySelector('#pause');
 
-play.addEventListener("click",()=>{
+
+
+let startGame = () => {
   play.style.visibility="hidden"
   pause.style.visibility="visible"
 
-  boardArray = createClearMatrix(COLS,ROWS)
+  boardArray = createClearBinaryMatrix(COLS,ROWS)
 
-  trailShape = [beginX,0]
-  currentType = nextType
+  trailShape = { x: beginX, y: 0}
+  currentShape = nextType
   nextType = types[nameOfTypes[randomNumber(6)]]
-  currentBlock = new Block(currentType.color,currentType.states[randomNumber(currentType.size)]);
+  currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);
 
 
   Interval = setInterval(()=>{
-    checkPlace = checking_moving_place(trailShape[0] , trailShape[1], trailShape[0] + currentType.size, trailShape[1] + currentType.size)
+    checkPlace = checking_moving_place(trailShape.x , trailShape.y, trailShape.x + currentShape.size, trailShape.y + currentShape.size, boardArray)
     console.log("Checking" + checkPlace)
 
     if(checkPlace) {
-      currentBlock.cleanShape(trailShape[0] , trailShape[1]-1)
-      currentBlock.drawShape(trailShape[0], trailShape[1])
+      currentBlock.cleanShape(trailShape.x , trailShape.y-1)
+      currentBlock.drawShape(trailShape.x, trailShape.y)
+
     }
     else {
-
+      console.log(trailShape);
+      boardArray = setShapeToBoard(boardArray, currentBlock.shape,trailShape)
+      trailShape = {x:beginX,y:0}
+      currentShape = nextType
+      nextType = types[nameOfTypes[randomNumber(6)]]
+      currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);    
     }
 
+    trailShape.y += 1
 
-    trailShape[1] += 1
     // if(current.coordinateY==19*BLOCK_SIZE) stop()
-  }, 1000);
-})
+  }, 500);
+}
 
 pause.addEventListener("click",()=>{
   pause.style.visibility="hidden"
@@ -44,14 +52,16 @@ function stop() {
 
 
 
+play.addEventListener("click",startGame)
 
 //! keyboard function
 function doKeyDown(evt){
   switch (evt.keyCode) {
+  case 13: 
+    startGame();
+  break;
   case 38:  /* Up arrow was pressed */
-  if (y - dy > 0){
-  y -= dy;
-  }
+    currentBlock.rotate();
   break;
   case 40:  /* Down arrow was pressed */
   if (y + dy < HEIGHT){

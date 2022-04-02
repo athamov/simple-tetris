@@ -4,7 +4,7 @@ let randomNumber = function(end){
 
 let Interval;
 let boardArray = []
-let currentType, currentBlock, checkPlace, trailShape;
+let currentShape, currentBlock, checkPlace, trailShape;
 let nextType = types[nameOfTypes[randomNumber(6)]]
 
 const canvas = document.querySelector('#canvas');
@@ -39,10 +39,9 @@ class Block {
   }
 
   drawShape(trailShapeX, trailShapeY) {
-    for (let x = 0; x < this.shape.length; x++) {
-      for (let y = 0; y < this.shape[x].length;y++) {
-        console.log(this.shape[x][y])
-        if(this.shape[x][y] == 1) {
+    for (let y = 0; y < this.shape.length; y++) {
+      for (let x = 0; x < this.shape.length;x++) {
+        if(this.shape[y][x] == 1) {
           this.coordinateX = x + trailShapeX
           this.coordinateY = y + trailShapeY
           this.createBlock()
@@ -52,10 +51,9 @@ class Block {
   }
 
   cleanShape(trailShapeX, trailShapeY) {
-    for (let x = 0; x < this.shape.length; x++) {
-      for (let y = 0; y < this.shape[x].length;y++) {
-        console.log(this.shape[x][y])
-        if(this.shape[x][y] == 1) {
+    for (let y = 0; y < this.shape.length;y++) {
+      for (let x = 0; x < this.shape.length; x++) {
+        if(this.shape[y][x] == 1) {
           this.coordinateX = x + trailShapeX
           this.coordinateY = y + trailShapeY
           this.cleanBlock()
@@ -63,9 +61,23 @@ class Block {
       }
     }
   }
+
+  rotate() {
+    console.table(this.shape);
+    console.log(this.coordinateX - this.shape.length, this.coordinateY - this.shape.length);
+    this.cleanShape(this.coordinateX - this.shape.length, this.coordinateY - this.shape.length)
+    this.shape = rotateCounterClockwise(this.shape)
+    // this.drawShape(this.coordinateX , this.coordinateY )
+  }
 }
 
-function checking_moving_place(beginX, beginY, endX, endY) {
+
+
+
+
+function checking_moving_place(beginX, beginY, endX, endY, boardArray) {
+  if(endX == boardArray[0].length + 1 || endY == boardArray.length + 1) return false
+
   for(let y = beginY; y < endY; y++){
     for(let x = beginX; x < endX; x++){
       if( boardArray[ y ][ x ] != 0 )  return false;
@@ -76,12 +88,41 @@ function checking_moving_place(beginX, beginY, endX, endY) {
 
 function createClearBinaryMatrix(rows, cols) {
   let boardArray = []
-  for(let y=0; y<rows;y++){
+  for(let y=0; y<cols;y++){
     boardArray[y]=[]
-    for(let x=0; x<cols;x++){
+    for(let x=0; x<rows;x++){
     boardArray[ y ][ x ] = 0;
   }
   }
   return boardArray
 }
 
+function setShapeToBoard(boardArray,shape, trailShape) {
+  for(let y=0; y<shape.length; y++) {
+    for(let x=0;x<shape.length;x++) {
+      if (shape[ y ][ x ] == 1) {
+        // console.log( y, x, trailShape.y, trailShape.x)
+        // console.table(boardArray);
+        // console.table(shape);
+        boardArray[ y + trailShape.y-1][ x + trailShape.x-1] = 1
+      }
+    }
+  }
+  // console.log(boardArray);
+  return boardArray
+}
+
+// copied https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/48377330#48377330
+function rotateCounterClockwise(a){
+  let n=a.length;
+  for (var i=0; i<n/2; i++) {
+      for (var j=i; j<n-i-1; j++) {
+          let tmp=a[i][j];
+          a[i][j]=a[j][n-i-1];
+          a[j][n-i-1]=a[n-i-1][n-j-1];
+          a[n-i-1][n-j-1]=a[n-j-1][i];
+          a[n-j-1][i]=tmp;
+      }
+  }
+  return a;
+}
