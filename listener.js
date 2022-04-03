@@ -6,28 +6,33 @@ play.addEventListener("click",()=>{
   play.style.visibility="hidden"
   pause.style.visibility="visible"
 
-  boardArray = createClearMatrix(COLS,ROWS)
+  boardArray = createClearBinaryMatrix(COLS,ROWS)
 
-  trailShape = [beginX,0]
-  currentType = nextType
+  trailShape = {x:beginX,y:0}
+  currentShape = nextType
   nextType = types[nameOfTypes[randomNumber(6)]]
-  currentBlock = new Block(currentType.color,currentType.states[randomNumber(currentType.size)]);
+  currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);
 
 
   Interval = setInterval(()=>{
-    checkPlace = checking_moving_place(trailShape[0] , trailShape[1], trailShape[0] + currentType.size, trailShape[1] + currentType.size)
+    // gets beginX, beginY, endX, endY
+    checkPlace = checking_moving_place(trailShape.x , trailShape.y, trailShape.x + currentShape.size, trailShape.y + currentShape.size)
     console.log("Checking" + checkPlace)
 
-    if(checkPlace) {
-      currentBlock.cleanShape(trailShape[0] , trailShape[1]-1)
-      currentBlock.drawShape(trailShape[0], trailShape[1])
+    if( checkPlace ) {
+      currentBlock.cleanShape(trailShape.x , trailShape.y-1)
+      currentBlock.drawShape(trailShape.x, trailShape.y)
+      trailShape.y += 1
     }
     else {
-
+      boardArray = setShapeToArray(currentShype.states, boardArray, trailShape)
+      trailShape.x=beginX,trailShape.y=0
+      currentShape = nextType
+      nextType = types[nameOfTypes[randomNumber(6)]]
+      currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);
     }
 
 
-    trailShape[1] += 1
     // if(current.coordinateY==19*BLOCK_SIZE) stop()
   }, 1000);
 })
