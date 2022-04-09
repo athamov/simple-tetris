@@ -1,6 +1,6 @@
 const BLOCK_SIZE = 30;
 const COLS = 10;
-const ROWS = 22;
+const ROWS = 20;
 const BLOCK_GAP = 1;
 const nameOfTypes = ['I','J','L','O','S','T','V']
 const beginX = 4
@@ -14,12 +14,12 @@ const types = {
     pivotPoint: [BLOCK_SIZE * 2 + BLOCK_GAP * 1.5, BLOCK_SIZE + BLOCK_GAP * 0.5],
     spawnVector: [3, 1],
     states: [
-      [
-        [0, 0, 0, 0],
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-      ],
+      // [
+      //   [0, 0, 0, 0],
+      //   [1, 1, 1, 1],
+      //   [0, 0, 0, 0],
+      //   [0, 0, 0, 0]
+      // ],
       [
         [0, 0, 1, 0],
         [0, 0, 1, 0],

@@ -15,8 +15,12 @@ class Block {
   constructor(color, shape) {
     this.coordinateX;
     this.coordinateY;
+    this.trailShapeX;
+    this.trailShapeY;
     this.color = color;
     this.shape = shape;
+    console.table(shape)
+
   }
 
   createBlock() {
@@ -39,6 +43,8 @@ class Block {
   }
 
   drawShape(trailShapeX, trailShapeY) {
+    this.trailShapeX = trailShapeX;
+    this.trailShapeY = trailShapeY;
     for (let y = 0; y < this.shape.length; y++) {
       for (let x = 0; x < this.shape.length;x++) {
         if(this.shape[y][x] == 1) {
@@ -63,27 +69,42 @@ class Block {
   }
 
   rotate() {
-    console.table(this.shape);
-    console.log(this.coordinateX - this.shape.length, this.coordinateY - this.shape.length);
-    this.cleanShape(this.coordinateX - this.shape.length, this.coordinateY - this.shape.length)
+    this.cleanShape(this.trailShapeX, this.trailShapeY)
     this.shape = rotateCounterClockwise(this.shape)
-    // this.drawShape(this.coordinateX , this.coordinateY )
+     this.drawShape(this.trailShapeX , this.trailShapeY )
   }
 }
 
 
 
 
+function checking_moving_place(boardArray, shape, trailShape,side) {
+  // if(trailShape.x + shape.length == boardArray[0].length + 1 || trailShape.y + shape.length == boardArray.length) return false
+  
+  let lastLineEmpty = 0
 
-function checking_moving_place(beginX, beginY, endX, endY, boardArray) {
-  if(endX == boardArray[0].length + 1 || endY == boardArray.length + 1) return false
+  if(!shape[shape.length-1].includes(1)) lastLineEmpty = 1
+  console.log(lastLineEmpty,shape)
 
-  for(let y = beginY; y < endY; y++){
-    for(let x = beginX; x < endX; x++){
-      if( boardArray[ y ][ x ] != 0 )  return false;
+  if(trailShape.direction == 0) {
+    for(let y = shape.length-1; y >=0; y--) {
+      for(let x = 0; x < shape.length; x++) {
+        // console.log(trailShape.y,shape.length,i)
+        if(boardArray[ trailShape.y + shape.length - 1 - lastLineEmpty ]===undefined || boardArray[ trailShape.y + y - lastLineEmpty][ trailShape.x + x - 1 ] + shape[shape.length-1][x]==2) {
+          return false
+        }
+      }
+    }
+  }
+  // direction is left, right
+  else {
+    for(let y=0;y<shape.length;y++) {
+      
     }
   }
   return true
+
+
 }
 
 function createClearBinaryMatrix(rows, cols) {

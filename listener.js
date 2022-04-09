@@ -1,24 +1,26 @@
 //! listeners 
-const play = document.querySelector('#play');
+const playButton = document.querySelector('#play');
 const pause = document.querySelector('#pause');
 
 
 
-let startGame = () => {
-  play.style.visibility="hidden"
+let playGame = () => {
+  playButton.style.visibility="hidden"
   pause.style.visibility="visible"
 
   boardArray = createClearBinaryMatrix(COLS,ROWS)
 
-  trailShape = { x: beginX, y: 0}
+  // direction: down:0 right:1 left:-1 
+  trailShape = { x: beginX, y: 0,direction:0} 
   currentShape = nextType
   nextType = types[nameOfTypes[randomNumber(6)]]
   currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);
 
 
   Interval = setInterval(()=>{
-    checkPlace = checking_moving_place(trailShape.x , trailShape.y, trailShape.x + currentShape.size, trailShape.y + currentShape.size, boardArray)
-    console.log("Checking" + checkPlace)
+    trailShape.direction = 0
+    checkPlace = checking_moving_place(boardArray, currentBlock.shape, trailShape)
+    // console.log("Checking" + checkPlace)
 
     if(checkPlace) {
       currentBlock.cleanShape(trailShape.x , trailShape.y-1)
@@ -42,7 +44,7 @@ let startGame = () => {
 
 pause.addEventListener("click",()=>{
   pause.style.visibility="hidden"
-  play.style.visibility="visible"
+  playButton.style.visibility="visible"
 
 })
 function stop() {
@@ -52,13 +54,13 @@ function stop() {
 
 
 
-play.addEventListener("click",startGame)
+playButton.addEventListener("click",playGame)
 
 //! keyboard function
 function doKeyDown(evt){
   switch (evt.keyCode) {
   case 13: 
-    startGame();
+    playGame();
   break;
   case 38:  /* Up arrow was pressed */
     currentBlock.rotate();
@@ -69,9 +71,8 @@ function doKeyDown(evt){
   }
   break;
   case 37:  /* Left arrow was pressed */
-  if (x - dx > 0){
-  x -= dx;
-  }
+  trailShape.direction=-1;
+  checking_moving_place(boardArray, currentBlock.shape, trailShape)
   break;
   case 39:  /* Right arrow was pressed */
   if (x + dx < WIDTH){
