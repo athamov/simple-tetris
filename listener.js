@@ -24,7 +24,7 @@ let playGame = () => {
 
     if(checkPlace) {
       currentBlock.cleanShape(trailShape.x , trailShape.y-1)
-      currentBlock.drawShape(trailShape.x, trailShape.y)
+      currentBlock.drawShape(trailShape.x, trailShape.y) 
 
     }
     else {

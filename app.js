@@ -87,7 +87,7 @@ function checking_moving_place(boardArray, shape, trailShape) {
   console.log(lastLineEmpty,shape)
 
   if(trailShape.direction == 0) {
-    for(let y = shape.length-1; y >=0; y--) {
+    for(let y = shape.length-1; y >=0; y--) { 
       for(let x = 0; x < shape.length; x++) {
         // console.log(trailShape.y,shape.length,i)
         if(boardArray[ trailShape.y + shape.length - 1 - lastLineEmpty ]===undefined || boardArray[ trailShape.y + y - lastLineEmpty][ trailShape.x + x - 1 ] + shape[shape.length-1][x]==2) {
