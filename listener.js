@@ -30,7 +30,7 @@ let playGame = () => {
     else {
       console.log(trailShape);
       boardArray = setShapeToBoard(boardArray, currentBlock.shape,trailShape)
-      trailShape = {x:beginX,y:0}
+      trailShape = {x:beginX,y:0,direction:0}
       currentShape = nextType
       nextType = types[nameOfTypes[randomNumber(6)]]
       currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);    

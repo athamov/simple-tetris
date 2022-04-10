@@ -78,7 +78,7 @@ class Block {
 
 
 
-function checking_moving_place(boardArray, shape, trailShape,side) {
+function checking_moving_place(boardArray, shape, trailShape) {
   // if(trailShape.x + shape.length == boardArray[0].length + 1 || trailShape.y + shape.length == boardArray.length) return false
   
   let lastLineEmpty = 0
