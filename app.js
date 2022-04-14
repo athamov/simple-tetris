@@ -2,30 +2,28 @@ let randomNumber = function(end){
   return Math.floor(Math.random() * end )
 }
 
-let Interval;
-let boardArray = []
-let currentShape, currentBlock, checkPlace, trailShape;
+let Interval,boardArray,currentShape, currentBlock, checkPlace, trailShape;
 let nextType = types[nameOfTypes[randomNumber(6)]]
 
-const canvas = document.querySelector('#canvas');
+const currentCanvas = document.querySelector('#canvas');
 // get the context
-let ctx = canvas.getContext('2d'); 
+let ctx = currentCanvas.getContext('2d'); 
 
-class Block {
-  constructor(color, shape) {
+class CurrentCanvas {
+  constructor(Type) {
     this.coordinateX;
     this.coordinateY;
     this.trailShapeX;
     this.trailShapeY;
-    this.color = color;
-    this.shape = shape;
-    console.table(shape)
-
+    console.log(Type)
+    this.color = Type.color;
+    this.shape = Type.states[randomNumber(Type.size)];
+    console.table(this.shape)
   }
 
-  createBlock() {
-  let coordinateX_pixels=this.coordinateX*BLOCK_SIZE,
-      coordinateY_pixels=this.coordinateY*BLOCK_SIZE;
+  createBlock(coordinateX,coordinateY) {
+  let coordinateX_pixels=coordinateX*BLOCK_SIZE,
+      coordinateY_pixels=coordinateY*BLOCK_SIZE;
 
   // set fill and stroke styles
   ctx.fillStyle = this.color;
@@ -34,12 +32,10 @@ class Block {
   ctx.fillRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
 }
 
-  cleanBlock() {
-    let coordinateX_pixels=this.coordinateX*BLOCK_SIZE,
-        coordinateY_pixels=this.coordinateY*BLOCK_SIZE;
-    ctx.fillStyle = this.color;
+  cleanBlock(coordinateX,coordinateY) {
+    let coordinateX_pixels=coordinateX*BLOCK_SIZE,
+        coordinateY_pixels=coordinateY*BLOCK_SIZE;
     ctx.clearRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
-    
   }
 
   drawShape(trailShapeX, trailShapeY) {
@@ -48,21 +44,18 @@ class Block {
     for (let y = 0; y < this.shape.length; y++) {
       for (let x = 0; x < this.shape.length;x++) {
         if(this.shape[y][x] == 1) {
-          this.coordinateX = x + trailShapeX
-          this.coordinateY = y + trailShapeY
-          this.createBlock()
+          this.createBlock(x + trailShapeX, y + trailShapeY)
         }
       }
     }
   }
 
   cleanShape(trailShapeX, trailShapeY) {
-    for (let y = 0; y < this.shape.length;y++) {
-      for (let x = 0; x < this.shape.length; x++) {
+    let length = this.shape.length
+    for (let y = 0; y < length;y++) {
+      for (let x = 0; x < length; x++) {
         if(this.shape[y][x] == 1) {
-          this.coordinateX = x + trailShapeX
-          this.coordinateY = y + trailShapeY
-          this.cleanBlock()
+          this.cleanBlock(x+trailShapeX,y+trailShapeY)
         }
       }
     }
@@ -82,17 +75,19 @@ class Block {
 
 function checking_moving_place(boardArray, shape, trailShape) {
   // if(trailShape.x + shape.length == boardArray[0].length + 1 || trailShape.y + shape.length == boardArray.length) return false
-  
-  let lastLineEmpty = 0
+  //if direction is left checkWallX is 0,direction is right checkWallX is boardArray's length
+  // checkWallX = boardArray[0].length/2 + trailShape.direction*boardArray[0].length/2-1;
+  // console.log(checkWallX)
+  console.log(shape,trailShape)
+  let lastLineEmpty = 0,length =shape.length
 
-  if(!shape[shape.length-1].includes(1)) lastLineEmpty = 1
-  console.log(lastLineEmpty,shape)
+  if(!shape[length-1].includes(1)) lastLineEmpty = 1
 
   if(trailShape.direction == 0) {
-    for(let y = shape.length-1; y >=0; y--) { 
-      for(let x = 0; x < shape.length; x++) {
+    for(let y = length-1; y >=0; y--) { 
+      for(let x = 0; x < length; x++) {
         // console.log(trailShape.y,shape.length,i)
-        if(boardArray[ trailShape.y + shape.length - 1 - lastLineEmpty ]===undefined || boardArray[ trailShape.y + y - lastLineEmpty][ trailShape.x + x - 1 ] + shape[shape.length-1][x]==2) {
+        if(boardArray[ trailShape.y + length - 1 - lastLineEmpty ]===undefined || boardArray[ trailShape.y + y - lastLineEmpty][ trailShape.x + x - 1 ] + shape[length-1][x]==2) {
           return false
         }
       }
@@ -100,8 +95,8 @@ function checking_moving_place(boardArray, shape, trailShape) {
   }
   // direction is left, right
   else {
-    for(let y=0;y<shape.length;y++) {
-      
+  for(let y=0;y<length;y++) {
+      if(boardArray[0][checkWallX]) {}
     }
   }
   return true

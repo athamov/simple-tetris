@@ -2,44 +2,45 @@
 const playButton = document.querySelector('#play');
 const pause = document.querySelector('#pause');
 
+let move = (direction=0) => {
+  trailShape.direction = direction;
 
+
+  checkPlace = checking_moving_place(boardArray, currentBlock.shape, trailShape)
+  // console.log("Checking direction" + trailShape.direction +checkPlace)
+
+
+
+
+  if(checkPlace) {
+    if(trailShape.direction === 0) {
+      trailShape.y += 1
+      currentBlock.cleanShape(trailShape.x, trailShape.y-1);
+    }
+      else {
+        trailShape.x += trailShape.direction
+        currentBlock.cleanShape(trailShape.x-trailShape.direction, trailShape.y);
+      }
+      currentBlock.drawShape(trailShape.x, trailShape.y) 
+  }
+  else {
+    // console.log(trailShape);
+    boardArray = setShapeToBoard(boardArray, currentBlock.shape,trailShape)
+    trailShape = {x:beginX,y:0,direction:0}
+    nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
+    currentBlock = new CurrentCanvas(nextType.type);    
+  }
+
+}
 
 let playGame = () => {
-  playButton.style.visibility="hidden"
-  pause.style.visibility="visible"
-
   boardArray = createClearBinaryMatrix(COLS,ROWS)
 
   // direction: down:0 right:1 left:-1 
   trailShape = { x: beginX, y: 0,direction:0} 
-  currentShape = nextType
-  nextType = types[nameOfTypes[randomNumber(6)]]
-  currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);
-
-
-  Interval = setInterval(()=>{
-    trailShape.direction = 0
-    checkPlace = checking_moving_place(boardArray, currentBlock.shape, trailShape)
-    // console.log("Checking" + checkPlace)
-
-    if(checkPlace) {
-      currentBlock.cleanShape(trailShape.x , trailShape.y-1)
-      currentBlock.drawShape(trailShape.x, trailShape.y) 
-
-    }
-    else {
-      console.log(trailShape);
-      boardArray = setShapeToBoard(boardArray, currentBlock.shape,trailShape)
-      trailShape = {x:beginX,y:0,direction:0}
-      currentShape = nextType
-      nextType = types[nameOfTypes[randomNumber(6)]]
-      currentBlock = new Block(currentShape.color,currentShape.states[randomNumber(currentShape.size)]);    
-    }
-
-    trailShape.y += 1
-
-    // if(current.coordinateY==19*BLOCK_SIZE) stop()
-  }, 500);
+  nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
+  currentBlock = new CurrentCanvas(nextType.sendType());
+  Interval = setInterval(move(), 500);
 }
 
 pause.addEventListener("click",()=>{
@@ -47,10 +48,11 @@ pause.addEventListener("click",()=>{
   playButton.style.visibility="visible"
 
 })
-function stop() {
+function stopInterval() {
   console.log("stop")
   clearInterval(Interval);
 }
+
 
 
 
@@ -66,18 +68,13 @@ function doKeyDown(evt){
     currentBlock.rotate();
   break;
   case 40:  /* Down arrow was pressed */
-  if (y + dy < HEIGHT){
-  y += dy;
-  }
+  move(0)
   break;
   case 37:  /* Left arrow was pressed */
-  trailShape.direction=-1;
-  checking_moving_place(boardArray, currentBlock.shape, trailShape)
+  move(-1) // x will move to the left
   break;
   case 39:  /* Right arrow was pressed */
-  if (x + dx < WIDTH){
-  x += dx;
-  }
+  move(1) // x will move to the left
   break;
   }
   }
