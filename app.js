@@ -119,9 +119,7 @@ function setShapeToBoard(boardArray,shape, trailShape) {
   for(let y=0; y<shape.length; y++) {
     for(let x=0;x<shape.length;x++) {
       if (shape[ y ][ x ] == 1) {
-        // console.log( y, x, trailShape.y, trailShape.x)
-        // console.table(boardArray);
-        // console.table(shape);
+
         boardArray[ y + trailShape.y-1][ x + trailShape.x-1] = 1
       }
     }

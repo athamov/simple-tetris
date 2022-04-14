@@ -7,7 +7,7 @@ let move = (direction=0) => {
 
 
   checkPlace = checking_moving_place(boardArray, currentBlock.shape, trailShape)
-  // console.log("Checking direction" + trailShape.direction +checkPlace)
+  console.log("Checking direction" + trailShape.direction +checkPlace)
 
 
 
