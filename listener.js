@@ -1,82 +1,96 @@
-
 //! listeners 
 const playButton = document.querySelector('#play');
 const pause = document.querySelector('#pause');
 
 let move = (direction=0) => {
-  trailShape.direction = direction;
+  currentBlock.direction = direction;
 
+  checkPlace = checking_move_place(boardArray, currentBlock)
+  //if shape moves to down it clean shape in cancas and draw in down 
+  if(checkPlace) changeShapeInCanvas(currentBlock);
 
-  checkPlace = checking_moving_place(boardArray, currentBlock.shape, trailShape)
-  // console.log("Checking direction" + trailShape.direction +checkPlace)
+  else if(currentBlock.direction==0) {
+    boardArray = changeBoard(boardArray, currentBlock)
+    if(countLine>0) {
 
-
-
-
-  if(checkPlace) {
-    if(trailShape.direction === 0) {
-      trailShape.y += 1
-      currentBlock.cleanShape(trailShape.x, trailShape.y-1);
     }
-      else {
-        trailShape.x += trailShape.direction
-        currentBlock.cleanShape(trailShape.x-trailShape.direction, trailShape.y);
-      }
-      currentBlock.drawShape(trailShape.x, trailShape.y) 
-  }
-  else {
-    // console.log(trailShape);
-    boardArray = setShapeToBoard(boardArray, currentBlock.shape,trailShape)
-    trailShape = {x:beginX,y:0,direction:0}
+    currentBlock = new CurrentCanvas(nextType.sendType());    
     nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
-    currentBlock = new CurrentCanvas(nextType.type);    
+    nextType.drawShape()
   }
+}
 
+let changeBoard = (boardArray,currentBlock) => {
+  boardArray = setShapeToBoard(boardArray, currentBlock)
+  boardArray = check_and_clean_line(boardArray);
 }
 
 let playGame = () => {
-  boardArray = createClearBinaryMatrix(COLS,ROWS)
+  if(!Interval) {
+    boardArray = createClearBinaryMatrix(COLS,ROWS)
+    ctx.clearRect(0,0,COLS*BLOCK_SIZE,ROWS*BLOCK_SIZE)
+    // direction: down:0 right:1 left:-1 
+    nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
+    nextType.drawShape()
+    currentBlock = new CurrentCanvas(nextType.sendType());
+    Interval = setInterval(move, 500);
+  }
+}
 
-  // direction: down:0 right:1 left:-1 
-  trailShape = { x: beginX, y: 0,direction:0} 
-  nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
-  currentBlock = new CurrentCanvas(nextType.sendType());
-  Interval = setInterval(move(), 500);
+let changeShapeInCanvas = (currentBlock) => {
+  if(currentBlock.direction==0) {
+    currentBlock.trailShapeY += 1
+    currentBlock.cleanShape(currentBlock.trailShapeX, currentBlock.trailShapeY-1);
+  }
+  else {
+    currentBlock.trailShapeX += currentBlock.direction
+    currentBlock.cleanShape(currentBlock.trailShapeX-currentBlock.direction, currentBlock.trailShapeY);
+  }
+  currentBlock.drawShape()
 }
 
 pause.addEventListener("click",()=>{
-  pause.style.visibility="hidden"
-  playButton.style.visibility="visible"
-
+  // pause.style.visibility="hidden"
+  // playButton.style.visibility="visible"
+  stopInterval()
 })
+
 function stopInterval() {
-  console.log("stop")
-  clearInterval(Interval);
+  if(Interval) {
+    console.log("stop")
+    clearInterval(Interval);
+    Interval = 0
+  }
 }
 
-
-
-
-playButton.addEventListener("click",playGame)
-
 //! keyboard function
-function doKeyDown(evt){
+function doKeyDown(evt) {
   switch (evt.keyCode) {
-  case 13: 
-    playGame();
-  break;
-  case 38:  /* Up arrow was pressed */
-    currentBlock.rotate();
-  break;
-  case 40:  /* Down arrow was pressed */
-  move(0)
-  break;
-  case 37:  /* Left arrow was pressed */
-  move(-1) // x will move to the left
-  break;
-  case 39:  /* Right arrow was pressed */
-  move(1) // x will move to the left
-  break;
+    case 13: 
+      playGame();
+    break;
+    case 38:  /* Up arrow was pressed */
+      currentBlock.rotate();
+    break;
+    case 40:  /* Down arrow was pressed */
+      move()
+    break;
+    case 37:  /* Left arrow was pressed */
+      move(-1)
+    break;
+    case 39:  /* Right arrow was pressed */
+      move(1)
+    break;
+    case 32: /* space was pressed */
+    while(checkPlace!=false){
+      move()
+    }
+    break;
+    case 80: /* p was pressed */
+      stopInterval()
+    break;
   }
-  }
+}
+
+playButton.addEventListener("click",playGame);
 window.addEventListener('keydown',doKeyDown,true);
