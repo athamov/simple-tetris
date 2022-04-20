@@ -2,7 +2,7 @@ let randomNumber = function(end){
   return Math.floor(Math.random() * end )
 }
 
-let Interval,boardArray, currentBlock, checkPlace,countLine,nextType;
+let Interval,boardArray, currentBlock, checkPlace,fullLines,nextType;
 
 const currentCanvas = document.querySelector('#canvas');
 // get the context
@@ -23,24 +23,16 @@ class CurrentCanvas {
   createBlock(coordinateX,coordinateY,color=this.color) {
   let coordinateX_pixels=coordinateX*BLOCK_SIZE,
       coordinateY_pixels=coordinateY*BLOCK_SIZE;
-
   // set fill and stroke styles
   ctx.fillStyle = color;
-
   // draw a rectangle with fill and stroke
   ctx.fillRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
 }
 
-  cleanBlock(coordinateX,coordinateY) {
-    let coordinateX_pixels=coordinateX*BLOCK_SIZE,
-        coordinateY_pixels=coordinateY*BLOCK_SIZE;
-    ctx.clearRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
-  }
-
   drawShape() {
     let shape = this.shape,length = shape.length,trailShapeY = this.trailShapeY,trailShapeX = this.trailShapeX;
-    for (let y = 0; y < this.shape.length; y++) {
-      for (let x = 0; x < this.shape.length;x++) {
+    for (let y = 0; y < length; y++) {
+      for (let x = 0; x < length;x++) {
         if(this.shape[y][x] != 0) {
           this.createBlock(x + trailShapeX, y + trailShapeY)
         }
@@ -48,6 +40,24 @@ class CurrentCanvas {
     }
   }
 
+  drawFullBoard(boardArray) {
+    for(let y =0; y< ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if(boardArray[ y ][ x ] != 0) {
+          this.createBlock(x,y,types[nameOfTypes[boardArray[ y ][ x ]-1]].color)
+        }
+        else {
+          this.cleanBlock(x,y)
+        }
+      }
+    }
+  }
+
+  cleanBlock(coordinateX,coordinateY) {
+    let coordinateX_pixels=coordinateX*BLOCK_SIZE,
+        coordinateY_pixels=coordinateY*BLOCK_SIZE;
+    ctx.clearRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
+  }
   cleanShape(trailShapeX, trailShapeY) {
     let length = this.shape.length
     for (let y = 0; y < length;y++) {
@@ -59,6 +69,11 @@ class CurrentCanvas {
     }
   }
 
+  cleanLine(y) {
+    for(let x = 0; x < COLS; x++) {
+      this.cleanBlock(x,y)
+    }
+  }
 
   rotate() {
     this.cleanShape(this.trailShapeX, this.trailShapeY)
@@ -72,15 +87,13 @@ function checking_move_place(boardArray, currentBlock) {
       direction = currentBlock.direction,
       trailShapeY = currentBlock.trailShapeY,
       trailShapeX = currentBlock.trailShapeX,
-      length =shape.length;
-
+      length = shape.length;
   for(let y=0; y<length; y++) {
     for(let x=0;x<length;x++) {
       if (shape[ y ][ x ] != 0) {
         if(direction == 0) {
           if(boardArray[ y + trailShapeY+1]==undefined ||
             boardArray[ y + trailShapeY+1][ x + trailShapeX]!=0) {
-              console.table(boardArray)
              return false;}
         }
         else {
@@ -128,17 +141,17 @@ function setShapeToBoard(boardArray,currentBlock) {
   return boardArray
 }
 
-function check_and_clean_line(array) {
+function check_line(array) {
   let length = array.length,
-      countLine=0;
-  for(let y = length-1; y <= 0;y++) {
-    if(array[y].includes(0)) {
-      countLine = countLine + 1
-      array[y] = createClearArray(ROWS)
-      array= move_line_to_top(array,y)
+      countLine=[]
+  for(let y = length-1; y >= 0;y--) {
+    // console.log(array[y])
+    if(!array[y].includes(0)) {
+      countLine.push(y)
     }
   }
-  return array
+
+  return countLine
 }
 
 // copied https://www.codegrepper.com/code-examples/javascript/how+to+move+an+element+of+an+array+in+javascript

@@ -3,6 +3,7 @@ const playButton = document.querySelector('#play');
 const pause = document.querySelector('#pause');
 
 let move = (direction=0) => {
+  // direction: down:0 right:1 left:-1 
   currentBlock.direction = direction;
 
   checkPlace = checking_move_place(boardArray, currentBlock)
@@ -11,25 +12,30 @@ let move = (direction=0) => {
 
   else if(currentBlock.direction==0) {
     boardArray = changeBoard(boardArray, currentBlock)
-    if(countLine>0) {
-
-    }
     currentBlock = new CurrentCanvas(nextType.sendType());    
     nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
     nextType.drawShape()
+    
   }
 }
 
 let changeBoard = (boardArray,currentBlock) => {
   boardArray = setShapeToBoard(boardArray, currentBlock)
-  boardArray = check_and_clean_line(boardArray);
+  fullLines = check_line(boardArray);
+  while(fullLines.length!=0) {
+    currentBlock.cleanLine(fullLines[0]);
+    boardArray[fullLines[0]] = createClearArray(ROWS);
+    boardArray = move_line_to_top(boardArray, fullLines[0])
+    currentBlock.drawFullBoard(boardArray);
+    fullLines.shift()
+  }
+  return boardArray;
 }
 
 let playGame = () => {
   if(!Interval) {
     boardArray = createClearBinaryMatrix(COLS,ROWS)
     ctx.clearRect(0,0,COLS*BLOCK_SIZE,ROWS*BLOCK_SIZE)
-    // direction: down:0 right:1 left:-1 
     nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
     nextType.drawShape()
     currentBlock = new CurrentCanvas(nextType.sendType());
