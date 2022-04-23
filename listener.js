@@ -1,6 +1,8 @@
 //! listeners 
 const playButton = document.querySelector('#play');
 const pause = document.querySelector('#pause');
+const scoreView = document.querySelector("#Score");
+const lineView = document.querySelector("#Lines");
 
 let move = (direction=0) => {
   // direction: down:0 right:1 left:-1 
@@ -8,20 +10,31 @@ let move = (direction=0) => {
 
   checkPlace = checking_move_place(boardArray, currentBlock)
   //if shape moves to down it clean shape in cancas and draw in down 
-  if(checkPlace) changeShapeInCanvas(currentBlock);
-
-  else if(currentBlock.direction==0) {
-    boardArray = changeBoard(boardArray, currentBlock)
-    currentBlock = new CurrentCanvas(nextType.sendType());    
-    nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
-    nextType.drawShape()
-    
+  if(gameIs=='play') {
+    if(checkPlace) {
+      changeShapeInCanvas(currentBlock);
+      if(currentBlock.direction==0) scoreView.innerHTML=++score
+    }
+    else if(currentBlock.direction==0) {
+      boardArray = changeBoard(boardArray, currentBlock)
+      console.table(boardArray)
+      currentBlock = new CurrentCanvas(nextType.sendType());  
+      nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
+      nextType.drawShape()
+      if(checkEndGame(boardArray)){endGame()}
+      
+    }
   }
 }
 
 let changeBoard = (boardArray,currentBlock) => {
   boardArray = setShapeToBoard(boardArray, currentBlock)
   fullLines = check_line(boardArray);
+
+  score += addLineScore(fullLines.length);
+  lineScore += fullLines.length
+  lineView.innerHTML=lineScore
+
   while(fullLines.length!=0) {
     currentBlock.cleanLine(fullLines[0]);
     boardArray[fullLines[0]] = createClearArray(ROWS);
@@ -29,16 +42,18 @@ let changeBoard = (boardArray,currentBlock) => {
     currentBlock.drawFullBoard(boardArray);
     fullLines.shift()
   }
+
   return boardArray;
 }
 
 let playGame = () => {
-  if(!Interval) {
+  if(gameIs!='play') {
     boardArray = createClearBinaryMatrix(COLS,ROWS)
     ctx.clearRect(0,0,COLS*BLOCK_SIZE,ROWS*BLOCK_SIZE)
     nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
     nextType.drawShape()
     currentBlock = new CurrentCanvas(nextType.sendType());
+    score=0,lineScore=0,gameIs='play';
     Interval = setInterval(move, 500);
   }
 }
@@ -55,12 +70,6 @@ let changeShapeInCanvas = (currentBlock) => {
   currentBlock.drawShape()
 }
 
-pause.addEventListener("click",()=>{
-  // pause.style.visibility="hidden"
-  // playButton.style.visibility="visible"
-  stopInterval()
-})
-
 function stopInterval() {
   if(Interval) {
     console.log("stop")
@@ -69,6 +78,34 @@ function stopInterval() {
   }
 }
 
+let pauseGame =() => {
+  // pause.style.visibility="hidden"
+  // playButton.style.visibility="visible"
+  console.log(gameIs)
+  if(gameIs=='play') {
+    stopInterval()
+    gameIs = 'pause'
+  }
+  else if(gameIs=='pause') {
+    Interval=setInterval(move,500)
+    gameIs = 'play'
+  }
+};
+
+let endGame = () => {
+  // console.log("first")
+  ctx.font = "30px Comic Sans MS";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText("Game Over", canvas.width/2, canvas.height/2);
+  stopInterval()
+  gameIs='end'
+}
+
+pause.addEventListener("click",pauseGame)
+
+
+
 //! keyboard function
 function doKeyDown(evt) {
   switch (evt.keyCode) {
@@ -76,6 +113,7 @@ function doKeyDown(evt) {
       playGame();
     break;
     case 38:  /* Up arrow was pressed */
+      if(gameIs=='play')
       currentBlock.rotate();
     break;
     case 40:  /* Down arrow was pressed */
@@ -87,13 +125,14 @@ function doKeyDown(evt) {
     case 39:  /* Right arrow was pressed */
       move(1)
     break;
-    case 32: /* space was pressed */
+    case 32: /* HARDROP space was pressed */
     while(checkPlace!=false){
       move()
+      scoreView.innerHTML=++score;
     }
     break;
     case 80: /* p was pressed */
-      stopInterval()
+      pauseGame()
     break;
   }
 }

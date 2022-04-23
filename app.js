@@ -2,7 +2,7 @@ let randomNumber = function(end){
   return Math.floor(Math.random() * end )
 }
 
-let Interval,boardArray, currentBlock, checkPlace,fullLines,nextType;
+let Interval,boardArray, currentBlock, checkPlace,fullLines,nextType,score,lineScore,gameIs;
 
 const currentCanvas = document.querySelector('#canvas');
 // get the context
@@ -82,6 +82,14 @@ class CurrentCanvas {
   }
 }
 
+function addLineScore(num) {
+  if(num==4) return 200
+  else if(num == 3) return 90
+  else if(num == 2) return 40
+  else if(num == 1) return 10
+  else return 0
+}
+
 function checking_move_place(boardArray, currentBlock) {
   let shape = currentBlock.shape,
       direction = currentBlock.direction,
@@ -106,6 +114,16 @@ function checking_move_place(boardArray, currentBlock) {
   }
 
   return true
+}
+
+function checkEndGame(array) {
+  for(let i = 0; i < array[0].length; i++) {
+      if(array[3][i]!=0) {
+        console.log(i)
+        return true
+      }
+  }
+  return false
 }
 
 function createClearBinaryMatrix(rows, cols) {
@@ -163,16 +181,16 @@ function move_line_to_top(array,fromIndex) {
 }
 
 // copied https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/48377330#48377330
-function rotateCounterClockwise(a){
-  let n=a.length;
-  for (var i=0; i<n/2; i++) {
-      for (var j=i; j<n-i-1; j++) {
-          let tmp=a[i][j];
-          a[i][j]=a[j][n-i-1];
-          a[j][n-i-1]=a[n-i-1][n-j-1];
-          a[n-i-1][n-j-1]=a[n-j-1][i];
-          a[n-j-1][i]=tmp;
+function rotateCounterClockwise(state){
+  let len=state.length;
+  for (var i=0; i<len/2; i++) {
+      for (var j=i; j<len-i-1; j++) {
+          let tmp=state[i][j];
+          state[i][j]=state[j][len-i-1];
+          state[j][len-i-1]=state[len-i-1][len-j-1];
+          state[len-i-1][len-j-1]=state[len-j-1][i];
+          state[len-j-1][i]=tmp;
       }
   }
-  return a;
+  return state;
 }
