@@ -10,17 +10,16 @@ let ctx = currentCanvas.getContext('2d');
 
 class CurrentCanvas {
   constructor(Type) {
-    this.coordinateX;
-    this.coordinateY;
     this.trailShapeX=beginX;
     this.trailShapeY=0;
     this.direction=0;
-    console.log(Type)
     this.color = Type.color;
-    this.shape = Type.states[randomNumber(Type.states.length)];
+    this.indexState=Type.states.length-1
+    this.shape = Type.states[this.indexState];
+    this.type = Type.type;
   }
 
-  createBlock(coordinateX,coordinateY,color=this.color) {
+  drawBlock(coordinateX,coordinateY,color=this.color) {
   let coordinateX_pixels=coordinateX*BLOCK_SIZE,
       coordinateY_pixels=coordinateY*BLOCK_SIZE;
   // set fill and stroke styles
@@ -34,7 +33,7 @@ class CurrentCanvas {
     for (let y = 0; y < length; y++) {
       for (let x = 0; x < length;x++) {
         if(this.shape[y][x] != 0) {
-          this.createBlock(x + trailShapeX, y + trailShapeY)
+          this.drawBlock(x + trailShapeX, y + trailShapeY)
         }
       }
     }
@@ -44,7 +43,7 @@ class CurrentCanvas {
     for(let y =0; y< ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
         if(boardArray[ y ][ x ] != 0) {
-          this.createBlock(x,y,types[nameOfTypes[boardArray[ y ][ x ]-1]].color)
+          this.drawBlock(x,y,types[nameOfTypes[boardArray[ y ][ x ]-1]].color)
         }
         else {
           this.cleanBlock(x,y)
@@ -58,8 +57,10 @@ class CurrentCanvas {
         coordinateY_pixels=coordinateY*BLOCK_SIZE;
     ctx.clearRect(coordinateX_pixels, coordinateY_pixels, BLOCK_SIZE, BLOCK_SIZE);
   }
-  cleanShape(trailShapeX, trailShapeY) {
-    let length = this.shape.length
+  cleanShape() {
+    let trailShapeX = this.trailShapeX,
+        trailShapeY = this.trailShapeY
+        length = this.shape.length
     for (let y = 0; y < length;y++) {
       for (let x = 0; x < length; x++) {
         if(this.shape[y][x] != 0) {
@@ -76,9 +77,9 @@ class CurrentCanvas {
   }
 
   rotate() {
-    this.cleanShape(this.trailShapeX, this.trailShapeY)
+    this.cleanShape()
     this.shape = rotateCounterClockwise(this.shape)
-    this.drawShape(this.trailShapeX , this.trailShapeY )
+    this.drawShape()
   }
 }
 
@@ -90,12 +91,12 @@ function addLineScore(num) {
   else return 0
 }
 
-function checking_move_place(boardArray, currentBlock) {
-  let shape = currentBlock.shape,
-      direction = currentBlock.direction,
+function checking_move_place(boardArray, currentBlock,shape) {
+  let direction = currentBlock.direction,
       trailShapeY = currentBlock.trailShapeY,
       trailShapeX = currentBlock.trailShapeX,
       length = shape.length;
+
   for(let y=0; y<length; y++) {
     for(let x=0;x<length;x++) {
       if (shape[ y ][ x ] != 0) {
@@ -118,12 +119,27 @@ function checking_move_place(boardArray, currentBlock) {
 
 function checkEndGame(array) {
   for(let i = 0; i < array[0].length; i++) {
-      if(array[3][i]!=0) {
-        console.log(i)
+      if(array[2][i]>=1) {
+        console.log(array[3])
         return true
       }
   }
   return false
+}
+
+function changeState(types,type,indexState) {
+  console.log(indexState)
+  console.log(indexState!=types[type].states.length-1)
+  if(indexState!=types[type].states.length-1) {
+    console.log(indexState)
+    indexState++;
+  }
+  else {
+    indexState=0
+  } 
+  console.log(indexState)
+  currentBlock.indexState=indexState
+  return types[type].states[indexState]
 }
 
 function createClearBinaryMatrix(rows, cols) {

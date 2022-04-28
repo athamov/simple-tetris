@@ -8,7 +8,7 @@ let move = (direction=0) => {
   // direction: down:0 right:1 left:-1 
   currentBlock.direction = direction;
 
-  checkPlace = checking_move_place(boardArray, currentBlock)
+  checkPlace = checking_move_place(boardArray, currentBlock,currentBlock.shape)
   //if shape moves to down it clean shape in cancas and draw in down 
   if(gameIs=='play') {
     if(checkPlace) {
@@ -17,12 +17,10 @@ let move = (direction=0) => {
     }
     else if(currentBlock.direction==0) {
       boardArray = changeBoard(boardArray, currentBlock)
-      console.table(boardArray)
       currentBlock = new CurrentCanvas(nextType.sendType());  
       nextType = new NextCanvas(types[nameOfTypes[randomNumber(6)]])
       nextType.drawShape()
-      if(checkEndGame(boardArray)){endGame()}
-      
+      if(checkEndGame(boardArray)) endGame() 
     }
   }
 }
@@ -41,6 +39,7 @@ let changeBoard = (boardArray,currentBlock) => {
     boardArray = move_line_to_top(boardArray, fullLines[0])
     currentBlock.drawFullBoard(boardArray);
     fullLines.shift()
+    // console.log(fullLines)
   }
 
   return boardArray;
@@ -60,12 +59,12 @@ let playGame = () => {
 
 let changeShapeInCanvas = (currentBlock) => {
   if(currentBlock.direction==0) {
+    currentBlock.cleanShape();
     currentBlock.trailShapeY += 1
-    currentBlock.cleanShape(currentBlock.trailShapeX, currentBlock.trailShapeY-1);
   }
   else {
+    currentBlock.cleanShape();
     currentBlock.trailShapeX += currentBlock.direction
-    currentBlock.cleanShape(currentBlock.trailShapeX-currentBlock.direction, currentBlock.trailShapeY);
   }
   currentBlock.drawShape()
 }
@@ -92,7 +91,7 @@ let pauseGame =() => {
   }
 };
 
-let endGame = () => {
+let endGame = () => { 
   // console.log("first")
   ctx.font = "30px Comic Sans MS";
   ctx.fillStyle = "red";
@@ -113,8 +112,13 @@ function doKeyDown(evt) {
       playGame();
     break;
     case 38:  /* Up arrow was pressed */
-      if(gameIs=='play')
-      currentBlock.rotate();
+      let changedState = changeState(types,currentBlock.type,currentBlock.indexState)
+      checkPlace = checking_move_place(boardArray, currentBlock,changedState);
+      if(gameIs=='play'&&checkPlace) {
+      currentBlock.cleanShape();
+      currentBlock.shape = changedState 
+      currentBlock.drawShape()
+    }
     break;
     case 40:  /* Down arrow was pressed */
       move()

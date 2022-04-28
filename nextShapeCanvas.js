@@ -6,7 +6,7 @@ class NextCanvas {
   constructor(Type) {
     this.type = Type
     this.color = Type.color;
-    this.shape = Type.states[randomNumber(Type.size)];
+    this.shape = Type.states[0];
   }
   
   sendType() {

@@ -29,6 +29,15 @@
   height: 40px;
 }
 
+#rotate_button {
+  transform: rotate(-90deg);
+}
+#right_button { 
+  transform: rotate(180deg);
+}
+#down_button {
+  transform: rotate(90deg);
+}
 /* #pause {
   visibility: hidden;
 } */
